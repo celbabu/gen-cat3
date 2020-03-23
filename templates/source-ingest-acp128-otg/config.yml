@@ -1,0 +1,4 @@
+name: source-ingest-acp128-otg
+description: "Ingests ACP128 wrapper OS-OTG (XCTC and GOLD) messages and converts to GCI+ MaritimeContact messages"
+version: latest
+category: Ingester

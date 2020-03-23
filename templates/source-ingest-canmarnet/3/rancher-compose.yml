@@ -1,0 +1,258 @@
+version: '2'
+services:
+  source-ingest-canmarnet:
+    scale: 1
+    health_check:
+      response_timeout: 2000
+      healthy_threshold: 2
+      port: 9000
+      unhealthy_threshold: 3
+      initializing_timeout: 120000
+      interval: 30000
+      strategy: recreate
+      request_line: GET "/healthcheck" "HTTP/1.0"
+      reinitializing_timeout: 120000
+
+  decode-tca:
+    scale: 1
+    health_check:
+      response_timeout: 2000
+      healthy_threshold: 2
+      port: 9000
+      unhealthy_threshold: 3
+      initializing_timeout: 120000
+      interval: 30000
+      strategy: recreate
+      request_line: GET "/healthcheck" "HTTP/1.0"
+      reinitializing_timeout: 120000
+
+  decode-oswex:
+    scale: 1
+    health_check:
+      response_timeout: 2000
+      healthy_threshold: 2
+      port: 9000
+      unhealthy_threshold: 3
+      initializing_timeout: 120000
+      interval: 30000
+      strategy: recreate
+      request_line: GET "/healthcheck" "HTTP/1.0"
+      reinitializing_timeout: 120000
+
+##### Disabled decode-aa1 for now as we are no longer receiving emails to process. #####
+#  decode-aa1:
+#    scale: 1
+#    health_check:
+#      response_timeout: 2000
+#      healthy_threshold: 2
+#      port: 9000
+#      unhealthy_threshold: 3
+#      initializing_timeout: 120000
+#      interval: 30000
+#      strategy: recreate
+#      request_line: GET "/healthcheck" "HTTP/1.0"
+#      reinitializing_timeout: 120000
+
+  clamav:
+    scale: 1
+    start_on_create: true
+    health_check:
+      response_timeout: 2000
+      healthy_threshold: 2
+      port: 3310
+      unhealthy_threshold: 3
+      initializing_timeout: 180000
+      interval: 2000
+      strategy: recreate
+      reinitializing_timeout: 180000
+
+catalog:
+  name: "ingest-canmarnet"
+  version: "development"
+  upgrade_from: none
+  description: "Email ingester to consume oswex, tca emails and forward the raw emails to corresponding topics on the kafka broker."
+  minimum_rancher_version: v0.51.0
+  questions:
+    - variable: canmarnet_application_id
+      label: "ingest-canmarnet application id"
+      required: true
+      type: "string"
+      description: "An alphanumeric string that uniquely identifies this application instance. WARNING: Applications deployed with the same Application ID that consume data from the same Kafka topic will have data split between them. See the Kafka documentation for APPLICATION_ID for further explanation."
+
+    - variable: tca_application_id
+      label: "decode-tca application id"
+      required: true
+      type: "string"
+      description: "An alphanumeric string that uniquely identifies this application instance. WARNING: Applications deployed with the same Application ID that consume data from the same Kafka topic will have data split between them. See the Kafka documentation for APPLICATION_ID for further explanation."
+
+    - variable: oswex_application_id
+      label: "decode-otg application id"
+      required: true
+      type: "string"
+      description: "An alphanumeric string that uniquely identifies this application instance. WARNING: Applications deployed with the same Application ID that consume data from the same Kafka topic will have data split between them. See the Kafka documentation for APPLICATION_ID for further explanation."
+
+    - variable: kafka_service
+      description: "Kafka Stack/Service."
+      label: "Kafka Broker to Connect to."
+      required: false
+      type: "service"
+
+    - variable: schema_registry_service
+      description: "Confluent Schema Registry Service."
+      label: "Schema Registry"
+      required: false
+      type: "service"
+
+    - variable: kafka_host
+      label: "Kafka Broker"
+      required: true
+      type: "string"
+      default: "kafka"
+
+    - variable: kafka_port
+      label: "Kafka Broker Port"
+      required: true
+      type: "int"
+      default: "9092"
+
+    - variable: schema_registry_url
+      label: "Schema Registry URL"
+      required: true
+      type: "string"
+      default: "http://schema-registry:8081"
+      description: "URL to a Confluent Schema Registry"
+
+    - variable: use_imaps_component
+      label: "Use the secure imaps component."
+      required: true
+      type: "enum"
+      default: "false"
+      options:
+        - "false"
+        - "true"
+
+    - variable: imap_debug_mode
+      label: "Set the imap component to debug mode."
+      required: true
+      type: "enum"
+      default: "false"
+      options:
+        - "false"
+        - "true"
+
+    - variable: delete_message_after_read
+      label: "Delete the email after it has been read."
+      required: true
+      type: "enum"
+      default: "false"
+      options:
+        - "false"
+        - "true"
+
+    - variable: imap_port
+      label: "IMAP Port for camel imaps component to use to connect to."
+      required: true
+      type: "int"
+
+    - variable: imap_hostname
+      label: "Hostname to IMAP server."
+      required: true
+      type: "string"
+
+    - variable: canmarnet_email_address
+      label: "Email address for canmarnet gmail account."
+      required: true
+      type: "string"
+
+    - variable: canmarnet_email_password
+      label: "Password for canmarnet gmail account."
+      required: true
+      type: "string"
+
+    - variable: logging_level
+      label: "The Log4J Logging Level"
+      required: true
+      type: "enum"
+      options:
+        - ALL
+        - DEBUG
+        - INFO
+        - WARN
+        - ERROR
+        - FATAL
+        - OFF
+        - TRACE
+      default: "INFO"
+      description: "See Log4J documentation for further explanation of these levels."
+
+    - variable: canmarnet_oswex_output_topic
+      label: "Kafka Output Topic (Raw OSWEX Emails)"
+      required: true
+      type: "string"
+
+    - variable: canmarnet_tca_output_topic
+      label: "Kafka Output Topic (Raw Tca Emails)"
+      required: true
+      type: "string"
+
+    - variable: canmarnet_aa1_output_topic
+      label: "Kafka Output Topic (Raw Aa1 emails)"
+      required: true
+      type: "string"
+
+    - variable: tca_input_topic
+      label: "Tca Kafka Input Topic (Raw TCA emails)"
+      required: true
+      type: "string"
+
+    - variable: tca_output_topic
+      label: "Tca Kafka Output Topic (TcaMaritimeContacts)"
+      required: true
+      type: "string"
+
+    - variable: tca_common_output_topic
+      label: "Tca Kafka Output Topic (MaritimeContacts)"
+      required: true
+      type: "string"
+
+    - variable: oswex_canmarnet_input_topic
+      label: "Oswex Kafka Input Topic (Raw OSWEX Emails)"
+      required: true
+      type: "string"
+
+    - variable: oswex_maritime_contact_output_topic
+      label: "Oswex Kafka Output Topic (MaritimeContacts)"
+      required: true
+      type: "string"
+
+    - variable: oswex_format_specific_output_topic
+      label: "Oswex Kafka Output Topic (Oswex Specific Avro records)"
+      required: true
+      type: "string"
+
+    - variable: oswex_unparsable_output_topic
+      label: "Oswex Kafka Output Topic (Unparseable Otg records)"
+      required: true
+      type: "string"
+
+##### Disabled decode-aa1 for now as we are no longer receiving emails to process. #####
+#    - variable: aa1_application_id
+#      label: "decode-aa1 application id"
+#      required: true
+#      type: "string"
+#      description: "An alphanumeric string that uniquely identifies this application instance. WARNING: Applications deployed with the same Application ID that consume data from the same Kafka topic will have data split between them. See the Kafka documentation for APPLICATION_ID for further explanation."
+
+#    - variable: aa1_input_topic
+#      label: "Aa1 Kafka Input Topic (Raw AA1 emails)"
+#      required: true
+#      type: "string"
+#
+#    - variable: aa1_output_topic
+#      label: "Aa1 Kafka Output Topic (Aa1MaritimeContacts)"
+#      required: true
+#      type: "string"
+#
+#    - variable: aa1_common_output_topic
+#      label: "Aa1 Kafka Output Topic (MaritimeContacts)"
+#      required: true
+#      type: "string"

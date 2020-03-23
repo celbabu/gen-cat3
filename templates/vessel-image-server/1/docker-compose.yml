@@ -1,0 +1,16 @@
+
+# thumbor-image-server: image server that stores vessel images and the images are accessible over http
+#
+# note: Thumbor is a docker based image server. Details can be found here (https://github.com/APSL/docker-thumbor) 
+
+version: '2'
+services:
+  thumbor-image-server:
+    image: apsl/thumbor:6.3.0
+    volumes:
+      - /opt/thumbor/data:/data
+    ports:
+      - ${image_server_port}:8000 # thumbor port
+    environment:
+      - UPLOAD_ENABLED=True
+      - LOADER=thumbor.loaders.file_loader

@@ -1,0 +1,4 @@
+name: vessel-identity
+description: The identity service finds vessel detials in Elasticsearch and provides the result back to a requesting client. 
+version: latest
+category: service

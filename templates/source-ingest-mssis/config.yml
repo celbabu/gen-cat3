@@ -1,0 +1,4 @@
+name: source-ingest-mssis
+description: The ingest MSSIS stack consumes raw MSSIS AIS reports from socket, and decodes these messages generating MaritimeContacts. 
+version: latest
+category: Ingester

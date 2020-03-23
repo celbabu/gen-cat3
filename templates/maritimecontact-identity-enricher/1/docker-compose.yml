@@ -1,0 +1,53 @@
+version: '2'
+services:
+  identity-rewriter:
+    image: 131.137.160.79:9191/gciplus-microservices/gen3/maritimecontact-identity-rewriter:1.0.1
+    restart: on-failure
+    environment:
+      APPLICATION_ID: ${application_id}
+      BOOTSTRAP_SERVERS_CONFIG: ${bootstap_servers_config} 
+      SCHEMA_REGISTRY_URL: ${schema_registry_url}
+      KAFKA_INPUT_TOPICS: ${kafka_input_topics}
+      KAFKA_OUTPUT_TOPIC: ${kafka_output_topic}
+      REST_QUERY_URI: http://restmatcher/query
+      NUM_STREAM_THREADS: ${num_stream_threads}
+      AUTO_OFFSET_RESET: ${auto_offset_reset}
+      MONITORING_HEALTHCHECK_PORT: 9000
+      MONITORING_HEALTHCHECK_PATH: healthcheck
+      MONITORING_HEALTHCHECK_REFRESH_MS: 30000
+      MONITORING_PROMETHEUS_PORT: 9001
+      LOGGING_LEVEL: ${logging_level}
+      JAVA_OPTS: "-Xms512m -Xmx1g"
+    external_links:
+      - ${kafka_service}:kafka
+      - ${schema_registry_service}:schema-registry
+    links:
+      - rest-matcher:restmatcher
+    labels:
+      prometheus.port: 9001
+
+  mongodb-identities:
+    image: 131.137.160.79:9191/gciplus-microservices/common/mongodb-identities:1.1.0
+    restart: on-failure
+
+  rest-matcher:
+    image: 131.137.160.79:9191/gciplus-microservices/common/identity-matcher-python-flask:1.0.0
+    restart: on-failure
+    environment:
+      MONGODB_URI: mongodb://mongodbidentities:27017
+      MONGODB_ID_DB: ids
+      MONGODB_ID_COLLECTION: idrefset
+      MONGODB_AUX_COLLECTION: aux
+      MATCHING_THRESHOLD_SCORE: 0.42
+      MATCHING_SIMPLE_REPLACEMENT: 1
+      MATCHING_SMART_REPLACEMENT: 0
+      MATCHING_MATCH_AGNOSTIC_CLEANING: 1
+      MATCHING_USE_AUX: 1
+      MATCHING_APPEND_ID: 0
+      MATCHING_APPEND_META: 0
+      MATCHING_APPEND_SUMMARY_TO_TXT: 0
+      MATCHING_DEBUG: 0
+      MATCHING_MATCH_VERSION: 1.0
+      MATCHING_STORE_MATCH: 0
+    links:
+      - mongodb-identities:mongodbidentities

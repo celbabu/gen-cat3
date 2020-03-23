@@ -1,0 +1,5 @@
+name: maritimecontact-avro-to-json
+description: |
+  Ensures the messages consumed from the input topic (as defined by KAFKA_INPUT_TOPIC) are transferred into Json format.
+version: latest
+category: processor

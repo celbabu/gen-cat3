@@ -1,0 +1,4 @@
+name: encode-maritimecontact-otg
+description: This stack converts MaritimeContact data to OTH-Gold messages wrapped in an ACP128 message and publishes those messages to a Kafka Topic
+version: latest
+category: Encoder

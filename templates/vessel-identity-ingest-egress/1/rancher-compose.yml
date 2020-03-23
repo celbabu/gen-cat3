@@ -1,0 +1,214 @@
+version: '2'
+services:
+  postgres:
+    scale: 1
+  ingest-lloyds:
+    scale: 1
+  ingest-itu:
+    scale: 1
+  ingest-tc:
+    scale: 1
+  identity-data-export:
+    scale: 1
+
+catalog:
+  name: "vessel-identity-ingest-egress"
+  version: "development"
+  description: "Provides vessel/ship identity data ingest and export processes"
+  minimum_rancher_version: v0.51.0
+  upgrade_from: none
+  questions:
+    - variable: application_id
+      label: "Application Id"
+      description: "An alphanumeric string that uniquely identifies this application instance."
+      required: true
+      type: "string"
+      default: "vessel-ingest-egress"
+    - variable: logging_level
+      label: "Logging Level"
+      description: "See Log4J documentation for further explanation of these levels."   
+      required: true
+      type: "enum"
+      options:
+        - all
+        - debug
+        - info
+        - warn
+        - error
+        - fatal
+        - trace
+      default: "info"
+    - variable: vessel_index_name 
+      label: "Vessel Index Name"
+      description: "Elasticsearch Document Index Name for Vessel" 
+      required: true
+      type: "string"
+      default: "vessel_merged"
+    - variable: vessel_aux_index_name
+      label: "Vessel Aux Index Name"
+      description: "Elasticsearch Document Index Name for Vessel Details"
+      required: true
+      type: "string"
+      default: "vessel_aux"
+    - variable: identity_db_host
+      label: "Identity DB Host"         
+      description: "DB host to store vessel identity"                                   
+      required: true
+      type: "string"
+      default: "postgres"                        
+    - variable: identity_db_name
+      label: "Identity DB Name"         
+      description: "DB name to store vessel identity"                                   
+      required: true
+      type: "string"
+      default: "vesseldb"
+    - variable: identity_db_port
+      description: "Access port on the db host"
+      label: "Identity DB Port"
+      required: true
+      type: "int"
+      default: 5432
+    - variable: identity_db_user 
+      label: "DB User Name"
+      description: "user name to access vessel identity DB" 
+      required: true
+      type: "string"
+      default: "postgres"
+    - variable: identity_db_pass
+      label: "DB User Password"
+      description: "user password to access vessel identity DB"
+      required: true
+      type: "string"
+      default: "mysecretpassword"
+    - variable: lloyds_ingest_host
+      label: "Lloyds ingest host"         
+      description: "Host on which Lloyds ingest is running"                                   
+      required: true
+      type: "string"
+      default: "0.0.0.0"
+    - variable: lloyds_ingest_port
+      label: "Lloyds ingest post"
+      description: "Access port to trigger Lloyds ingest"
+      required: true
+      type: "int"
+      default: 8010
+    - variable: lloyds_ingest_cron
+      label: "Lloyds ingest cron"
+      description: "cron to execute Lloyds ingest on a regular basis"
+      required: true
+      type: "string"
+      default: "30 * * * * ? 2099"  
+    - variable: lloyds_ftp_host
+      label: "Lloyds FTP Host"
+      description: "FTP host from where Lloyds data is to be downloaded"
+      required: true
+      type: "string"
+      default: "ftgauk.ihs.com" 
+    - variable: lloyds_ftp_user
+      label: "Lloyds FTP User"
+      description: "User to connect to Lloyds FTP"
+      required: true
+      type: "string"
+      default: "srv_maruk_mfcanada" 
+    - variable: lloyds_ftp_pass
+      label: "Lloyds FTP Pass"
+      description: "Password to connect to Lloyds FTP"
+      required: true
+      type: "string"
+      default: "HS%3pURcLy6oUXASJ7G" 
+    - variable: itu_ingest_host
+      label: "Mars Itu ingest host"         
+      description: "Host on which itu ingest is running"                                   
+      required: true
+      type: "string"
+      default: "0.0.0.0"
+    - variable: itu_ingest_port
+      label: "Mars Itu ingest port"
+      description: "Access port to trigger itu ingest"
+      required: true
+      type: "int"
+      default: 8020
+    - variable: itu_ingest_cron
+      label: "Mars Itu ingest cron"
+      description: "cron to execute itu ingest on a regular basis"
+      required: true
+      type: "string"
+      default: "30 * * * * ? 2099"  
+    - variable: itu_http_uri
+      label: "Mars Itu HTTP URI"
+      description: "HTTP URI to download itu data from"
+      required: true
+      type: "string"
+      default: "extranet.itu.int/itu-r/mars-specific-download/dnd/dnd_ship.txt" 
+    - variable: itu_http_user
+      label: "Mars Itu HTTP User"
+      description: "User to connect to Itu HTTP"
+      required: true
+      type: "string"
+      default: "mms_dnd" 
+    - variable: itu_http_pass
+      label: "Mars Itu HTTP Pass"
+      description: "Password to connect to Itu HTTP"
+      required: true
+      type: "string"
+      default: "montreal" 
+    - variable: tc_ingest_host
+      label: "TC ingest host"         
+      description: "Host on which tc ingest is running"                                   
+      required: true
+      type: "string"
+      default: "0.0.0.0"
+    - variable: tc_ingest_port
+      label: "TC ingest port"
+      description: "Access port to trigger tc ingest"
+      required: true
+      type: "int"
+      default: 8030
+    - variable: tc_ingest_cron
+      label: "TC ingest cron"
+      description: "cron to execute tc ingest on a regular basis"
+      required: true
+      type: "string"
+      default: "30 * * * * ? 2099"
+    - variable: data_export_host
+      label: "Identity data export host"         
+      description: "Host on which export process is running"                                   
+      required: true
+      type: "string"
+      default: "0.0.0.0"
+    - variable: data_export_port
+      label: "Identity data export port"
+      description: "Access port to trigger export process"
+      required: true
+      type: "int"
+      default: 8050
+    - variable: data_export_cron
+      label: "data export cron"
+      description: "cron to execute data export on a regular basis"
+      required: true
+      type: "string"
+      default: "30 * * * * ? 2099"
+    - variable: data_merge_cron
+      label: "vessel data merge cron"
+      description: "cron to execute data merge on a regular basis"
+      required: true
+      type: "string"
+      default: "30 * * * * ? 2099"
+    - variable: index_rollover_cron
+      label: "index roll over cron"
+      description: "cron to execute vessel index rollover process on a regular basis"
+      required: true
+      type: "string"
+      default: "30 * * * * ? 2099"
+    - variable: identity_image_host
+      label: "Identity image service host"
+      description: "Host on which vessel image service is running"
+      required: true
+      type: "string"
+      default: "0.0.0.0"
+    - variable: identity_image_port
+      label: "Identity image service port"
+      description: "Access port to image service"
+      required: true
+      type: "int"
+      default: 8100

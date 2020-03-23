@@ -1,0 +1,5 @@
+name: output-socket
+description: |
+  Consume data from a Kafka topic and send it to a TCP/UDP socket. 
+version: latest
+category: processor

@@ -1,0 +1,116 @@
+version: '2'
+services:
+  source-ingest-innav:
+    scale: 1
+    health_check:
+      response_timeout: 2000
+      healthy_threshold: 2
+      port: 9000
+      unhealthy_threshold: 3
+      initializing_timeout: 120000
+      interval: 30000
+      strategy: recreate
+      request_line: GET "/healthcheck" "HTTP/1.0"
+      reinitializing_timeout: 120000
+
+catalog:
+  name: "ingest-innav-ws"
+  version: "1.0.4"
+  description: "The ingest INNAV microservice polls the INNAV web service at certain time intervals sending it a request for ship data to process into MaritimeContacts and InnavMaritimeContacts."
+  minimum_rancher_version: v0.51.0
+  upgrade_from: "<1.0.4"
+  questions:
+    - variable: application_id
+      label: "Application Id"
+      required: true
+      type: "string"
+      description: "An alphanumeric string that uniquely identifies this application instance. WARNING: Applications deployed with the same Application ID that consume data from the same Kafka topic will have data split between them. See the Kafka documentation for APPLICATION_ID for further explanation." 
+    - variable: kafka_service         
+      description: "Kafka Stack/Service."
+      label: "Kafka Broker to Connect to."                             
+      required: false
+      type: "service"
+    - variable: schema_registry_service
+      description: "Confluent Schema Registry Service."
+      label: "Schema Registry"
+      required: false
+      type: "service"
+    - variable: kafka_host 
+      label: "Kafka Broker"
+      required: true
+      type: "string"
+      default: "kafka"
+    - variable: kafka_port 
+      label: "Kafka Broker Port"
+      required: true
+      type: "int"
+      default: "9092"
+    - variable: schema_registry_url                                                                                                      
+      label: "Schema Registry URL"
+      required: true
+      type: "string"
+      default: "http://schema-registry:8081"
+      description: "URL to a Confluent Schema Registry"
+    - variable: innav_endpoint
+      label: "INNAV Endpoint Name"
+      required: true
+      default: "innavEndPoint"
+      type: "string"
+    - variable: innav_endpoint_address
+      label: "INNAV Endpoint URL"
+      required: true
+      default: "https://ws.innav.gc.ca/webservices.asmx"
+      type: "string"
+    - variable: innav_wsdl_address
+      label: "INNAV Endpoint WSDL URL"
+      default: "https://ws.innav.gc.ca/webservices.asmx?WSDL"
+      type: "string"
+    - variable: kafka_output_topic
+      label: "Name of topic where MaritimeContact messages are stored on the kafka broker"
+      required: true
+      type: "string"
+    - variable: kafka_innav_maritime_contact_topic
+      label: "Name of topic where InnavMaritimeContact messages are stored on the kafka broker"
+      required: true
+      type: "string"
+    - variable: enable_soap_logging
+      label: "Enable the logging of SOAP request / responses."
+      required: true
+      type: "enum"
+      default: "false"
+      options:
+        - "false"
+        - "true"
+    - variable: produce_dead_reck
+      label: "Produce MaritimeContacts from positions gathered using 'dead reckoning' sensor type"
+      required: true
+      type: "enum"
+      default: "false"
+      options:
+        - "false"
+        - "true"
+    - variable: logging_level
+      label: "The Log4J Logging Level"
+      required: true
+      type: "enum"
+      options:
+        - ALL
+        - DEBUG
+        - INFO
+        - WARN
+        - ERROR
+        - FATAL
+        - OFF
+        - TRACE
+      default: "INFO"
+      description: "See Log4J documentation for further explanation of these levels."
+    - variable: cron_schedule
+      label: "Cron Schedule"
+      required: true
+      type: "string"
+      default: "0 0/2 * * * ?"
+    - variable: receive_timeout
+      label: "Cron Schedule"
+      required: true
+      type: "long"
+      default: "60000"

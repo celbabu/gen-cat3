@@ -1,0 +1,119 @@
+version: '2'
+services:
+  output-socket:
+    scale: 1
+    health_check:
+      response_timeout: 2000
+      healthy_threshold: 2
+      port: 9000
+      unhealthy_threshold: 3
+      initializing_timeout: 120000
+      interval: 30000
+      strategy: recreate
+      request_line: GET "/healthcheck" "HTTP/1.0"
+      reinitializing_timeout: 120000
+catalog:
+  name: "output-socket"
+  version: "1.1.0"
+  description: "A output-socket description"
+  minimum_rancher_version: v0.51.0
+  upgrade_from:  "<1.1.0"
+  questions:
+    - variable: application_id
+      label: "Application Id"
+      required: true
+      type: "string"
+      description: "An alphanumeric string that uniquely identifies this application instance (also used as kafka group id). WARNING: Applications deployed with the same Application ID that consume data from the same Kafka topic will have data split between them. See the Kafka documentation for APPLICATION_ID for further explanation"
+    - variable: kafka_service
+      description: "Kafka stack/service"
+      label: "Kafka broker to connect to"
+      required: false
+      type: "service"
+    - variable: kafka_host
+      label: "Kafka Host"
+      required: true
+      type: "string"
+      default: "kafka"
+    - variable: kafka_port
+      label: "Kafka Port"
+      required: true
+      type: "int"
+      default: 29092
+    - variable: kafka_input_topic
+      label: "Kafka input topic"
+      required: true
+      type: "string"
+      description: "A Kafka topic name used for input data"
+    - variable: auto_offset_reset
+      label: "Auto offset reset"
+      required: true
+      type: "enum"
+      options:
+        - latest
+        - earliest
+      default: "latest"
+      description: "This determines where this application will start reading from on the input Kafka topic on first startup. Once an application registers as a consumer on a topic, the read offset is tracked by application id"
+    - variable: output_socket_host
+      label: "Output Host"
+      required: true
+      type: "string"
+      description: "Hostname/IP of target. 0.0.0.0 if acting as server"
+    - variable: output_socket_port
+      label: "Output port"
+      required: true
+      type: "int"
+    - variable: output_socket_delay
+      label: "Output delay (ms)"
+      required: true
+      type: "int"
+      default: 0
+      description: "Wait this many milliseconds between each message. Useful for not overwhelming legacy applications like GCCS-M"
+    - variable: output_socket_disconnect
+      label: "Disconnect between messages"
+      required: true
+      type: "enum"
+      options:
+        - true
+        - false
+      default: "true"
+      description: "Whether to disconnect between each message sent to the destination. GCCS-M requires this to be set to 'true'"
+    - variable: output_socket_client_mode_enabled
+      label: "Client Mode"
+      required: true
+      type: "enum"
+      options:
+        - true
+        - false
+      default: "true"
+      description: "Set to 'true' to connect to a remote server (like GCCS-M) or 'false' to act as a server"
+    - variable: output_socket_protocol_udp
+      label: "Enable UDP"
+      required: true
+      type: "enum"
+      options:
+        - true
+        - false
+      default: "false"
+    - variable: output_socket_multicast_over_udp
+      label: "Enable multicast"
+      required: true
+      type: "enum"
+      options:
+        - true
+        - false
+      default: "false"
+    - variable: logging_level
+      label: "The log4J logging Level"
+      required: true
+      type: "enum"
+      options:
+        - ALL
+        - DEBUG
+        - INFO
+        - WARN
+        - ERROR
+        - FATAL
+        - OFF
+        - TRACE
+      default: "INFO"
+      description: "See log4J documentation for further explanation of these levels"

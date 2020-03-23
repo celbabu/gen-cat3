@@ -1,0 +1,24 @@
+version: '2'
+services:
+  enforce-schema-compatibility:
+   image: 131.137.160.79:9191/gciplus-microservices/gen3/enforce-schema-compatibility:1.0.0
+    restart: on-failure
+    environment:
+      APPLICATION_ID: ${application_id}
+      BOOTSTRAP_SERVERS_CONFIG: ${bootstap_servers_config} 
+      SCHEMA_REGISTRY_URL: ${schema_registry_url}
+      KAFKA_INPUT_TOPICS: ${kafka_input_topics}
+      KAFKA_OUTPUT_TOPIC: ${kafka_output_topic}
+      NUM_STREAM_THREADS: ${num_stream_threads}
+      AUTO_OFFSET_RESET: ${auto_offset_reset}
+      MONITORING_HEALTHCHECK_PORT: 9000
+      MONITORING_HEALTHCHECK_PATH: healthcheck
+      MONITORING_HEALTHCHECK_REFRESH_MS: 30000
+      MONITORING_PROMETHEUS_PORT: 9001
+      LOGGING_LEVEL: ${logging_level}
+      JAVA_OPTS: "-Xms64m -Xmx256m"
+    external_links:
+      - ${kafka_service}:kafka
+      - ${schema_registry_service}:schema-registry
+    labels:
+      prometheus.port: 9001

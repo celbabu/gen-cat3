@@ -1,0 +1,4 @@
+name: source-ingest-nmea-socket
+description: The ingest NMEA stack consumes raw NMEA AIS reports from socket, and decodes these messages generating MaritimeContacts. 
+version: latest
+category: Ingester

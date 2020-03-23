@@ -1,0 +1,4 @@
+name: source-ingest-lrit
+description: The ingest LRIT microservice polls the LRIT web service at certain time intervals sending it a request for ship data to process into MaritimeContacts and LritMaritimeContacts. 
+version: latest
+category: Ingester

@@ -1,0 +1,80 @@
+version: '2'
+services:
+  vessel-identity-image:
+    scale: 1
+    
+catalog:
+  name: "vessel identity image"
+  version: "1.0.0"
+  description: "Provides image url for ships with imo"
+  minimum_rancher_version: v0.51.0
+  upgrade_from: none
+  questions:
+    - variable: application_id
+      label: "Application Id"
+      description: "An alphanumeric string that uniquely identifies this application instance."
+      required: true
+      type: "string"
+      default: "Vessel-Image-Service"
+    - variable: logging_level
+      label: "Logging Level"
+      description: "See Log4J documentation for further explanation of these levels."   
+      required: true
+      type: "enum"
+      options:
+        - all
+        - debug
+        - info
+        - warn
+        - error
+        - fatal
+        - trace
+      default: "info"
+    - variable: identity_image_host
+      label: "Image service host"         
+      description: "Host on which image service is running"                                   
+      required: true
+      type: "string"
+      default: "0.0.0.0"
+    - variable: identity_image_port
+      label: "Image service post"
+      description: "Service access port"
+      required: true
+      type: "int"
+      default: 8060
+    - variable: image_db_host
+      label: "Image DB Host"         
+      description: "DB host to store vessel image map"                                   
+      required: true
+      type: "string"
+      default: "0.0.0.0"                        
+    - variable: image_db_name
+      label: "Image DB Name"         
+      description: "DB name to store vessel vessel image map"                                   
+      required: true
+      type: "string"
+      default: "vesseldb"
+    - variable: image_db_port
+      description: "Access port on the db host"
+      label: "Image DB Port"
+      required: true
+      type: "int"
+      default: 5432
+    - variable: image_db_user 
+      label: "DB User Name"
+      description: "user name to access vessel image map" 
+      required: true
+      type: "string"
+      default: "postgres"
+    - variable: image_db_pass
+      label: "DB User Password"
+      description: "user password to access vessel image map"
+      required: true
+      type: "string"
+      default: "mysecretpassword"
+    - variable: image_base_url
+      label: "Image base url"
+      description: "Image server base url with host and port"
+      required: true
+      type: "string"
+      default: "http://localhost:8100/unsafe"

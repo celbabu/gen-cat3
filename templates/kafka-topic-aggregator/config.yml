@@ -1,0 +1,5 @@
+name: kafka-topic-aggregator
+description: |
+  The Kafka Topic Aggregator microservice will read data from a list of source topics and write that data to a single consolidated output topic. It will work with both avro and non-avro data by utilizing either the GenericAvroSerde or ByteArray Serde. This is configured at runtime by setting the AGGREGATOR_USE_AVRO property to true or false as required. If used for aggregating avro data, it is assumed that all topics contain data of the same avro schema.
+version: latest
+category: processor

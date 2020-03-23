@@ -1,0 +1,4 @@
+name: source-ingest-pe2
+description: Ingest PE2 messages
+version: latest
+category: Ingester

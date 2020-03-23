@@ -1,0 +1,4 @@
+name: source-ingest-innav-ws
+description: The ingest INNAV microservice polls the INNAV web service at certain time intervals sending it a request for ship data to process into MaritimeContacts and InnavMaritimeContacts. 
+version: latest
+category: Ingester

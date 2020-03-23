@@ -1,0 +1,182 @@
+# starts up 5 services to configure a machine to perform ingest and egress of vessel data
+# 
+# postgres: postgres instance to store vessel data ingested from different sources(lloyds, itu, tc etc.)
+# ingest-lloyds: service to ingest lloyds data
+# ingest-itu: service to ingest mars-itu data
+# ingest-tc: service to ingest transport canada data
+# identity-data-export:  
+#   - merge data from different sources
+#   - exports vessel data in JSON format for elasticsearch 
+#   - performs index roll over in elastcisearch 
+#
+
+version: '2'
+services:
+  postgres:
+    container_name: vessel_postgres
+    image: postgres:12
+    restart: always
+    shm_size: 1024MB
+    ports:
+     - ${identity_db_port}:${identity_db_port}
+    environment:
+      POSTGRES_USER: ${identity_db_user}
+      POSTGRES_PASSWORD: ${identity_db_pass}
+    volumes:
+     - vessel-postgres-db:/var/lib/postgresql/data
+
+  ingest-lloyds:
+    #image: 131.137.160.79:9191/gciplus-microservices/common/ingest-llyods:development
+    image: localhost:5000/ingest-llyods:dev
+    restart: on-failure
+    ports:
+      - ${lloyds_ingest_port}:${lloyds_ingest_port}
+    depends_on:
+      - postgres
+    environment:
+      APPLICATION_ID:  ${application_id}-ingestlloyds
+      LOGGING_LEVEL: ${logging_level}
+      JMX_AGENT_PORT: 11083
+      MONITORING_HEALTHCHECK_PORT: 9000
+      MONITORING_HEALTHCHECK_PATH: healthcheck
+      MONITORING_HEALTHCHECK_REFRESH_MS: 30000
+      MONITORING_HEALTHCHECK_ROUTE_ERROR_UNHEALTHY_STATE_TIMEOUT_MS: 30000
+      MONITORING_HEALTHCHECK_INACTIVITY_CHECK_ENABLED: false
+      MONITORING_HEALTHCHECK_INACTIVITY_TIMEOUT_MS: 2000
+      MONITORING_PROMETHEUS_PORT: 9001
+      INGEST_HOST: ${lloyds_ingest_host}
+      INGEST_PORT: ${lloyds_ingest_port}
+      INGEST_CRON: ${lloyds_ingest_cron}
+      FTP_USER: ${lloyds_ftp_user}
+      FTP_HOST: ${lloyds_ftp_host}
+      FTP_PASS: ${lloyds_ftp_pass}
+      FTP_SOCKET_TIMEOUT: 120000
+      LOCAL_FILE_PATH: /data
+      IDENTITY_DATABASE_HOST: ${identity_db_host}
+      IDENTITY_DATABASE_NAME: ${identity_db_name}
+      IDENTITY_DATABASE_PORT: ${identity_db_port}
+      IDENTITY_DATABASE_USER: ${identity_db_user}
+      IDENTITY_DATABASE_PASS: ${identity_db_pass}
+      JAVA_OPTS: "-Xms512m -Xmx2048m -javaagent:lib/jmx_prometheus_javaagent-0.12.0.jar=9001:config.yml -Dlog4j.configurationFile=log4j2.properties"
+    volumes:
+      - /opt/vessel_data/import/lloyds:/data
+    labels:
+      prometheus.port: 9001   
+      io.rancher.container.pull_image: always  
+
+  ingest-itu:
+    #image: 131.137.160.79:9191/gciplus-microservices/common/ingest-itu:development
+    image: localhost:5000/ingest-itu:dev
+    restart: on-failure
+    ports:
+      - ${itu_ingest_port}:${itu_ingest_port}
+    depends_on:
+      - postgres
+    environment:
+      APPLICATION_ID:  ${application_id}-ingestitu
+      LOGGING_LEVEL: INFO
+      JMX_AGENT_PORT: 11083
+      MONITORING_HEALTHCHECK_PORT: 9000
+      MONITORING_HEALTHCHECK_PATH: healthcheck
+      MONITORING_HEALTHCHECK_REFRESH_MS: 30000
+      MONITORING_HEALTHCHECK_ROUTE_ERROR_UNHEALTHY_STATE_TIMEOUT_MS: 30000
+      MONITORING_HEALTHCHECK_INACTIVITY_CHECK_ENABLED: false
+      MONITORING_HEALTHCHECK_INACTIVITY_TIMEOUT_MS: 2000
+      MONITORING_PROMETHEUS_PORT: 9001
+      INGEST_HOST: ${itu_ingest_host}
+      INGEST_PORT: ${itu_ingest_port}
+      INGEST_CRON: ${itu_ingest_cron}
+      HTTP_USER: ${itu_http_user}
+      HTTP_PASS: ${itu_http_pass}
+      HTTP_URI: ${itu_http_uri}
+      LOCAL_FILE_PATH: /data
+      IDENTITY_DATABASE_HOST: ${identity_db_host}
+      IDENTITY_DATABASE_NAME: ${identity_db_name}
+      IDENTITY_DATABASE_PORT: ${identity_db_port}
+      IDENTITY_DATABASE_USER: ${identity_db_user}
+      IDENTITY_DATABASE_PASS: ${identity_db_pass}
+      JAVA_OPTS: "-Xms512m -Xmx2048m -javaagent:lib/jmx_prometheus_javaagent-0.12.0.jar=9001:config.yml -Dlog4j.configurationFile=log4j2.properties"
+    volumes:
+      - /opt/vessel_data/import/itu:/data
+    labels:
+      prometheus.port: 9001
+      io.rancher.container.pull_image: always
+
+  ingest-tc:
+    #image: 131.137.160.79:9191/gciplus-microservices/common/ingest-tc:development
+    image: localhost:5000/ingest-tc:dev
+    restart: on-failure
+    ports:
+      - ${tc_ingest_port}:${tc_ingest_port}
+    depends_on:
+      - postgres
+    environment:
+      APPLICATION_ID:  ${application_id}-ingesttc
+      LOGGING_LEVEL: ${logging_level}
+      JMX_AGENT_PORT: 11083
+      MONITORING_HEALTHCHECK_PORT: 9000
+      MONITORING_HEALTHCHECK_PATH: healthcheck
+      MONITORING_HEALTHCHECK_REFRESH_MS: 30000
+      MONITORING_HEALTHCHECK_ROUTE_ERROR_UNHEALTHY_STATE_TIMEOUT_MS: 30000
+      MONITORING_HEALTHCHECK_INACTIVITY_CHECK_ENABLED: false
+      MONITORING_HEALTHCHECK_INACTIVITY_TIMEOUT_MS: 2000
+      MONITORING_PROMETHEUS_PORT: 9001
+      INGEST_HOST: ${tc_ingest_host}
+      INGEST_PORT: ${tc_ingest_port}
+      INGEST_CRON: ${tc_ingest_cron}
+      LOCAL_FILE_PATH: /data
+      IDENTITY_DATABASE_HOST: ${identity_db_host}
+      IDENTITY_DATABASE_NAME: ${identity_db_name}
+      IDENTITY_DATABASE_PORT: ${identity_db_port}
+      IDENTITY_DATABASE_USER: ${identity_db_user}
+      IDENTITY_DATABASE_PASS: ${identity_db_pass}
+      JAVA_OPTS: "-Xms64m -Xmx512m -javaagent:lib/jmx_prometheus_javaagent-0.12.0.jar=9001:config.yml -Dlog4j.configurationFile=log4j2.properties"   
+    volumes:
+      - /opt/vessel_data/import/tc:/data
+    labels:
+      prometheus.port: 9001
+      io.rancher.container.pull_image: always      
+
+  identity-data-export:
+    #image: 131.137.160.79:9191/gciplus-microservices/gen3/identity-data-export:development
+    image: localhost:5000/identity-data-export:dev
+    restart: on-failure
+    ports:
+      - ${data_export_port}:${data_export_port}
+    depends_on:
+      - postgres
+    environment:
+      APPLICATION_ID:  ${application_id}-identitydataexport
+      LOGGING_LEVEL: ${logging_level}
+      JMX_AGENT_PORT: 11083
+      MONITORING_HEALTHCHECK_PORT: 9000
+      MONITORING_HEALTHCHECK_PATH: healthcheck
+      MONITORING_HEALTHCHECK_REFRESH_MS: 30000
+      MONITORING_HEALTHCHECK_ROUTE_ERROR_UNHEALTHY_STATE_TIMEOUT_MS: 30000
+      MONITORING_HEALTHCHECK_INACTIVITY_CHECK_ENABLED: false
+      MONITORING_HEALTHCHECK_INACTIVITY_TIMEOUT_MS: 2000
+      MONITORING_PROMETHEUS_PORT: 9001
+      EXPORT_HOST: ${data_export_host}
+      EXPORT_PORT: ${data_export_port}
+      EXPORT_CRON: ${data_export_cron}
+      EXPORT_PATH: /data
+      IDENTITY_DATABASE_HOST: ${identity_db_host}
+      IDENTITY_DATABASE_NAME: ${identity_db_name}
+      IDENTITY_DATABASE_PORT: ${identity_db_port}
+      IDENTITY_DATABASE_USER: ${identity_db_user}
+      IDENTITY_DATABASE_PASS: ${identity_db_pass}
+      MERGE_CRON: ${data_merge_cron}
+      ELASTIC_HOST: elastic-search
+      ELASTIC_PORT: 9200
+      VESSEL_INDEX_NAME: ${vessel_index_name}
+      ROLLOVER_CRON: ${index_rollover_cron}
+      JAVA_OPTS: "-Xms1028m -Xmx4096m -javaagent:lib/jmx_prometheus_javaagent-0.12.0.jar=9001:config.yml -Dlog4j.configurationFile=log4j2.properties"
+    volumes:
+      - /opt/vessel_data/export:/data
+    labels:
+      prometheus.port: 9001
+      io.rancher.container.pull_image: always    
+
+volumes:
+  vessel-postgres-db:
+    driver: local  

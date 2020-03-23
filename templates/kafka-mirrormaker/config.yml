@@ -1,0 +1,4 @@
+name: kafka-mirrormaker
+description: "A customized packaging of Kafka Mirrormaker that is used to sync data between Kafka Brokers. This image is packaged with a customized message handler that will allow for renaming topics, and synch of the special '_schemas' that will rewrite the schemas with the modified topic name if required."
+version: latest
+category: Ingester

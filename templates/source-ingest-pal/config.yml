@@ -1,0 +1,4 @@
+name: source-ingest-pal
+description: The ingest-pal micro service gathers AIS and EDT data from the PAL Webservice and converts both into Maritime Contacts for further use. When more information has been provided about the data received from the EDT response data will be split between multiple contact data (Vessels, Animals, Icebergs, PackIce, Gear, Buoys, Other) so information on the location of objects such as whales can be reported on.
+version: latest
+category: Ingester

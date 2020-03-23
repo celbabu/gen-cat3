@@ -1,0 +1,74 @@
+version: '2'
+services:
+  vessel-identity-service:
+    scale: 1
+  elastic-search:
+    scale: 1
+  kibana:
+    scale: 1    
+  vessel-identity-logstash:
+    scale: 1
+
+catalog:
+  name: "vessel-identity service"
+  version: "development"
+  description: "Provides vessel/ship identity details backed by a Elasticsearch DB."
+  minimum_rancher_version: v0.51.0
+  upgrade_from: none
+  questions:
+    - variable: application_id
+      label: "Application Id"
+      description: "An alphanumeric string that uniquely identifies this application instance."
+      required: true
+      type: "string"
+      default: "Vessel-Identity"
+    - variable: logging_level
+      label: "Logging Level"
+      description: "See Log4J documentation for further explanation of these levels."   
+      required: true
+      type: "enum"
+      options:
+        - all
+        - debug
+        - info
+        - warn
+        - error
+        - fatal
+        - trace
+      default: "info"
+    - variable: seda_concurrent_consumers
+      label: "SEDA Concurrent Consumers"
+      description: "Camel SEDA Concurrent Consumers"
+      required: true
+      type: "string"
+      default: "3"
+    - variable: identity_host
+      label: "Identity Host"
+      description: "Host of this service(name/ip)."
+      required: true
+      type: "string"
+      default: "0.0.0.0"
+    - variable: identity_port
+      description: "Service access port on the host port that maps to container port 8080"
+      label: "Identity Port"
+      required: true
+      type: "int"
+      default: 8800
+    - variable: vessel_index_name 
+      label: "Vessel Index Name"
+      description: "Elasticsearch Document Index Name for Vessel" 
+      required: true
+      type: "string"
+      default: "vessel_merged"
+    - variable: vessel_aux_index_name
+      label: "Vessel Aux Index Name"
+      description: "Elasticsearch Document Index Name for Vessel Details"
+      required: true
+      type: "string"
+      default: "vessel_aux"
+    - variable: dynamic_vessel_index
+      label: "Vessel Index Name with Date Stamp"
+      description: "Elasticsearch Document Index Name for Vessel with Date"
+      required: true
+      type: "string"
+      default: "y"

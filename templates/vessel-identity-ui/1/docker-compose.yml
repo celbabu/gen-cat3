@@ -1,0 +1,29 @@
+# vessel-search-node-api: Node app that accepts client request and performs the search against a ealsticsearch instance
+#     which contains all vessel data
+# 
+# vessel-search-ui: Vue based client that accepts serach request from end user and forwards it to the backend node app
+#   
+
+version: '2'
+services:
+  vessel-search-node-api: # custom Logstash pipeline
+    #image: 131.137.160.79:9191/gciplus-microservices/gen3/vessel-identity-logstash:development
+    image: localhost:5000/vessel-search-node-api:dev
+    restart: on-failure
+    network_mode: host
+    ports:
+      - "2900:2900" # Expose API port
+      - "9229:9229" # Expose Node process debug port (disable in production)
+    environment: # Set ENV vars
+      - NODE_ENV=local
+      - ES_HOST=${es_host} #131.137.160.72
+      - PORT=2900
+
+  vessel-search-ui:
+    #image: 131.137.160.79:9191/gciplus-microservices/gen3/vessel-identity-service:development
+    image: localhost:5000/vessel-search-ui:dev
+    restart: on-failure    
+    ports:
+      - "8090:80" # Forward site to localhost:8090
+    depends_on:
+      - vessel-search-node-api

@@ -1,0 +1,40 @@
+version: '2'
+services:
+  vessel-search-node-api:
+    scale: 1
+  vessel-search-ui:
+    scale: 1
+
+catalog:
+  name: "vessel-identity search ui"
+  version: "development"
+  description: "Provides search capability for vessel identity"
+  minimum_rancher_version: v0.51.0
+  upgrade_from: none
+  questions:
+    - variable: application_id
+      label: "Application Id"
+      description: "An alphanumeric string that uniquely identifies this application instance."
+      required: true
+      type: "string"
+      default: "Vessel Identity Search UI"
+    - variable: logging_level
+      label: "Logging Level"
+      description: "See Log4J documentation for further explanation of these levels."   
+      required: true
+      type: "enum"
+      options:
+        - all
+        - debug
+        - info
+        - warn
+        - error
+        - fatal
+        - trace
+      default: "info"
+    - variable: es_host
+      label: "Elastcisearch Host"
+      description: "Host of elasticsearch instance that this service will connect to."
+      required: true
+      type: "string"
+      default: "0.0.0.0"

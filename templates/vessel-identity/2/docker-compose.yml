@@ -1,0 +1,89 @@
+# starts up 4 services to configure a machine to host vessel identity service
+# 
+# elastic-search: instance of elasticsearch to hold vessel data and allow full text search
+# kibana: Admin ui for elasticsearch
+# vessel-identity-logstash: a logstash instance to ingest vessel data into elasticsearch
+# vessel-identity-service: a service that allow searching for vessel by name/imo/mmsi/call sign etc   
+#
+
+version: '2'
+services:
+  elastic-search:
+    image: docker.elastic.co/elasticsear.ch/elasticsearch:6.4.2
+    restart: on-failure
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - cluster.name=identity-cluster
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.4.2
+    restart: on-failure
+    ports:
+      - 5601:5601
+    environment:
+      - SERVER_NAME=kibana
+      - SERVER_HOST=0.0.0.0
+      - XPACK_MONITORING_ENABLED=true
+      - ELASTICSEARCH_URL=http://elastic-search:9200
+ 
+  vessel-identity-logstash: # custom Logstash pipeline
+    #image: 131.137.160.79:9191/gciplus-microservices/gen3/vessel-identity-logstash:development
+    image: localhost:5000/vessel-identity-logstash:dev
+    depends_on:
+      - elastic-search
+    environment:
+      - XPACK.MONITORING.ELASTICSEARCH_URL=http://elastic-search:9200
+      - ELASTIC_HOST=http://elastic-search:9200
+      - VESSEL_INDEX=${vessel_index_name}
+      - VESSEL_AUX_INDEX=${vessel_aux_index_name}
+      - LOG_LEVEL=${logging_level}
+      - DYNAMIC_INDEX=${dynamic_vessel_index}
+      - LS_JAVA_OPTS=-Xmx2g -Xms1g
+    volumes:
+      - /opt/vessel_data/export/:/usr/share/logstash/ingest-data/  
+    labels:
+      io.rancher.container.pull_image: always
+
+  vessel-identity-service:
+    #image: 131.137.160.79:9191/gciplus-microservices/gen3/vessel-identity-service:development
+    image: localhost:5000/vessel-identity:dev
+    restart: on-failure    
+    ports:
+      - ${identity_port}:${identity_port}
+    depends_on:
+      - elasticsearch
+    environment:
+      APPLICATION_ID: ${application_id}
+      LOGGING_LEVEL: ${logging_level}
+      SEDA_CONCURRENT_CONSUMERS: ${seda_concurrent_consumers}
+      ELASTIC_HOST: elastic-search 
+      ELASTIC_PORT: 9200      
+      IDENTITY_HOST: ${identity_host}
+      IDENTITY_PORT: ${identity_port}
+      ELASTIC_CLUSTER_NAME: identity-cluster
+      ELASTIC_INDEX_NAME: ${vessel_index_name}                
+      ELASTIC_INDEX_TYPE: _doc
+      JMX_AGENT_PORT: 11083
+      MONITORING_HEALTHCHECK_PORT: 9000
+      MONITORING_HEALTHCHECK_PATH: healthcheck
+      MONITORING_HEALTHCHECK_REFRESH_MS: 30000
+      MONITORING_PROMETHEUS_PORT: 9001
+      JAVA_OPTS: "-Xms64m -Xmx640m -javaagent:lib/jmx_prometheus_javaagent-0.10.jar=9001:config.yml -Dlog4j.configurationFile=log4j2.properties"
+    labels:
+      prometheus.port: 9001
+      io.rancher.container.pull_image: always  
+      
+volumes:
+  esdata:
+    driver: local

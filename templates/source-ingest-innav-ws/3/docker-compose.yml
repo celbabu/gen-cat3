@@ -1,0 +1,36 @@
+version: '2'
+services:
+  source-ingest-innav:
+    image: 131.137.160.79:9191/gciplus-microservices/gen3/ingest-innav-ws:1.0.6
+    restart: on-failure
+    environment:
+      APPLICATION_ID: ${application_id}
+      LOGGING_LEVEL: ${logging_level}
+      KAFKA_HOST: ${kafka_host}
+      KAFKA_PORT: ${kafka_port}
+      KAFKA_OUTPUT_TOPIC: ${kafka_output_topic}
+      KAFKA_INNAV_MARITIME_CONTACT_TOPIC: ${kafka_innav_maritime_contact_topic}
+      KAFKA_COMPRESSION: snappy
+      KAFKA_SERIALIZER_SETTINGS: "schema.registry.url=${schema_registry_url}"
+      KAFKA_SERIALIZER_CLASS: ca.forces.marlant.bis.gciplus.common.core.camel.kafka.EnvConfKafkaAvroSerializer
+      JMX_AGENT_PORT: 11083
+      SEDA_CONCURRENT_CONSUMERS: 4
+      INNAV_ENDPOINT: ${innav_endpoint}
+      INNAV_ENDPOINT_ADDRESS: ${innav_endpoint_address}
+      INNAV_WSDL_ADDRESS: ${innav_wsdl_address}
+      INNAV_CRON_SCHED: ${cron_schedule}
+      JVM_TRUSTSTORE: "/etc/ssl/certs/java/cacerts"
+      JAVA_OPTS: "-Xms64m -Xmx640m -javaagent:lib/jmx_prometheus_javaagent-0.10.jar=9001:config.yml -Dlog4j.configurationFile=log4j2.properties"
+      ENABLE_SOAP_LOGGING: ${enable_soap_logging}
+      MONITORING_HEALTHCHECK_PORT: 9000
+      MONITORING_HEALTHCHECK_PATH: healthcheck
+      MONITORING_HEALTHCHECK_REFRESH_MS: 30000
+      MONITORING_PROMETHEUS_PORT: 9001
+      PRODUCE_DEAD_RECK: "false"
+      RECEIVE_TIMEOUT: ${receive_timeout}
+  
+    external_links:
+      - ${kafka_service}:kafka
+      - ${schema_registry_service}:schema-registry
+    labels:
+      prometheus.port: 9001

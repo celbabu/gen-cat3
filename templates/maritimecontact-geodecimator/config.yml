@@ -1,5 +1,0 @@
-name: maritimecontact-geodecimator
-description: |
-  The role of the Geodecimator microservice is read from a high-velocity MaritimeContact stream (topic) and produce a lower velocity stream of MaritimeContact reports that satisify a geographic ("within polygon") filter and meets a minimum required update rate per vessel within that polygon.
-version: latest
-category: processor

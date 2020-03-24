@@ -1,5 +1,0 @@
-name: confluent-kafka
-description: |
-  Kafka stack.
-version: 5.1.2
-category: kafka

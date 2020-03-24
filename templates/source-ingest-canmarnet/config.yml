@@ -1,4 +1,0 @@
-name: source-ingest-canmarnet
-description: The ingest canmarnet microservice accesses the canmarnet gmail account and retrieves emails contained within.  It then parses these emails and forwards the data along to a kafka topic related to the OSWEX, TCA or AA1 microservices.  This data is then to be processed further by either the OSWEX, TCA or AA1 microservices.
-version: latest
-category: Ingester

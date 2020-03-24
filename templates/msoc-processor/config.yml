@@ -1,5 +1,0 @@
-name: msoc-processor
-description: |
-  The role of the msoc-processor is to consume maritimecontact data, decimate it, store processed data in mongodb in entities/contacts collection and provide a rest webservice for the MSOC to poll to comsume this data in a WFS2 like format. This service exists to provide backward compatability for the MSOC since they are locked in to a long-gone way in which DND used to provide poisiotnal data.
-version: latest
-category: processor

@@ -1,5 +1,0 @@
-name: enforce-schema-compatability
-description: |
-  Ensures the messages consumed from the output topic (as defined by KAFKA_OUTPUT_TOPIC) are serialized using a specific version of the maritime lexicon (as defined in the avro-lexicon-maritime project).
-version: latest
-category: processor

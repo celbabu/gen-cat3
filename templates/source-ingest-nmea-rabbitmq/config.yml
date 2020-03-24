@@ -1,4 +1,0 @@
-name: source-ingest-nmea-rabbitmq
-description: The ingest NMEA stack consumes raw NMEA AIS reports from rabbitmq (ie. Maerospace), and decodes these messages generating MaritimeContacts. 
-version: latest
-category: Ingester

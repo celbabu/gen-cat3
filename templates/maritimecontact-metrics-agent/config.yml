@@ -1,5 +1,0 @@
-name: maritimecontact-metrics-agent
-description: |
-  The metrics agent consumes maritimecontact data and exposes metrics about that data via its prometheus endpoint.
-version: latest
-category: processor

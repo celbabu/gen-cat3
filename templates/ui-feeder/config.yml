@@ -1,5 +1,0 @@
-name: ui-feeder
-description: |
-  Stack responsible for feeding the UI by decimating data and enforcing a schema version on the data.
-version: latest
-category: processor

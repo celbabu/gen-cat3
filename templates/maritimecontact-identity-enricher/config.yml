@@ -1,5 +1,0 @@
-name: maritimecontact-identity-enricher
-description: |
-  The identity enricher stack will rewrite the Name, MMSI, IMO, and CallSign elements of MaritimeContact's and write the output to a topic
-version: latest
-category: processor

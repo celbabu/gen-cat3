@@ -1,4 +1,4 @@
-name: vessel-identity
-description: The identity service finds vessel detials in Elasticsearch and provides the result back to a requesting client. 
+name: vessel-identity-ingest-egress
+description: Ingest services to process data from lloyds, itu, tc etc and export service to send json data to elasticsearch 
 version: latest
 category: service

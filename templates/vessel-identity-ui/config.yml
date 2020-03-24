@@ -1,4 +1,4 @@
-name: vessel-identity
-description: The identity service finds vessel detials in Elasticsearch and provides the result back to a requesting client. 
+name: vessel-identity-ui
+description: search ui that allows end user to search for vessel by name/omi/mmsi/call sign. 
 version: latest
 category: service

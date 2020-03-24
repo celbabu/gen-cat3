@@ -1,4 +1,4 @@
-name: vessel-identity
-description: The identity service finds vessel detials in Elasticsearch and provides the result back to a requesting client. 
+name: vessel-identity-image
+description: The identity image service prepares a list of image urls when given a vessel imo. 
 version: latest
 category: service

@@ -8,7 +8,7 @@ services:
     #image: 131.137.160.79:9191/gciplus-microservices/gen3/vessel-identity-image:1.0.0
     image: localhost:5000/vessel-identity-image:dev
     restart: on-failure
-    network_mode: host
+    #network_mode: host
     ports:
      - ${identity_image_port}:${identity_image_port}
     environment: # Set ENV vars

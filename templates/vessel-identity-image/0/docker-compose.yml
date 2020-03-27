@@ -34,8 +34,3 @@ services:
     labels:
       prometheus.port: 9001
       io.rancher.container.pull_image: always  
-
-networks:
-  default:
-    external:
-      name: vessel-identity-network

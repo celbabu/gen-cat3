@@ -19,8 +19,6 @@ services:
     shm_size: 1024MB
     ports:
      - ${identity_db_port}:${identity_db_port}
-    networks:
-      - vessel-identity-network
     environment:
       POSTGRES_USER: ${identity_db_user}
       POSTGRES_PASSWORD: ${identity_db_pass}
@@ -35,8 +33,6 @@ services:
       - ${lloyds_ingest_port}:${lloyds_ingest_port}
     depends_on:
       - postgres
-    networks:
-      - vessel-identity-network
     environment:
       APPLICATION_ID:  ${application_id}-ingestlloyds
       LOGGING_LEVEL: ${logging_level}
@@ -76,8 +72,6 @@ services:
       - ${itu_ingest_port}:${itu_ingest_port}
     depends_on:
       - postgres
-    networks:
-      - vessel-identity-network
     environment:
       APPLICATION_ID:  ${application_id}-ingestitu
       LOGGING_LEVEL: INFO
@@ -116,8 +110,6 @@ services:
       - ${tc_ingest_port}:${tc_ingest_port}
     depends_on:
       - postgres
-    networks:
-      - vessel-identity-network
     environment:
       APPLICATION_ID:  ${application_id}-ingesttc
       LOGGING_LEVEL: ${logging_level}
@@ -153,8 +145,6 @@ services:
       - ${data_export_port}:${data_export_port}
     depends_on:
       - postgres
-    networks:
-      - vessel-identity-network
     environment:
       APPLICATION_ID:  ${application_id}-identitydataexport
       LOGGING_LEVEL: ${logging_level}
@@ -190,9 +180,3 @@ services:
 volumes:
   vessel-postgres-db:
     driver: local  
-
-
-networks:
-  vessel-identity-network:
-    # Use a custom driver
-    driver: custom-driver-1

@@ -47,7 +47,7 @@ catalog:
       description: "DB host to store vessel image map"                                   
       required: true
       type: "string"
-      default: "postgres"                        
+      default: "0.0.0.0"                        
     - variable: image_db_name
       label: "Image DB Name"         
       description: "DB name to store vessel vessel image map"                                   

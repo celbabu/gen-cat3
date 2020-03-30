@@ -9,7 +9,7 @@
 version: '2'
 services:
   elastic-search:
-    image: docker.elastic.co/elasticsear.ch/elasticsearch:6.4.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
     restart: on-failure
     ports:
       - 9200:9200

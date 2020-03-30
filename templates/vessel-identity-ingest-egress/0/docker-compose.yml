@@ -15,7 +15,7 @@ services:
   postgres:
     image: localhost:5000/vessel-identity-postgres:dev
     restart: always
-    shm_size: 1024MB
+    shm_size: 512MB
     ports:
      - ${identity_db_port}:${identity_db_port}
     environment:

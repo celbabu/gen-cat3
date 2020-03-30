@@ -55,7 +55,7 @@ catalog:
       description: "DB host to store vessel identity"                                   
       required: true
       type: "string"
-      default: "postgres"                        
+      default: "vessel-postgres"                        
     - variable: identity_db_name
       label: "Identity DB Name"         
       description: "DB name to store vessel identity"                                   

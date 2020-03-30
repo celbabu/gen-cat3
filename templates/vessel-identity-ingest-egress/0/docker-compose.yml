@@ -32,7 +32,7 @@ services:
     ports:
       - ${lloyds_ingest_port}:${lloyds_ingest_port}
     depends_on:
-      - postgres
+      - vessel-postgres
     environment:
       APPLICATION_ID:  ${application_id}-ingestlloyds
       LOGGING_LEVEL: ${logging_level}
@@ -71,7 +71,7 @@ services:
     ports:
       - ${itu_ingest_port}:${itu_ingest_port}
     depends_on:
-      - postgres
+      - vessel-postgres
     environment:
       APPLICATION_ID:  ${application_id}-ingestitu
       LOGGING_LEVEL: INFO
@@ -109,7 +109,7 @@ services:
     ports:
       - ${tc_ingest_port}:${tc_ingest_port}
     depends_on:
-      - postgres
+      - vessel-postgres
     environment:
       APPLICATION_ID:  ${application_id}-ingesttc
       LOGGING_LEVEL: ${logging_level}
@@ -144,7 +144,7 @@ services:
     ports:
       - ${data_export_port}:${data_export_port}
     depends_on:
-      - postgres
+      - vessel-postgres
     environment:
       APPLICATION_ID:  ${application_id}-identitydataexport
       LOGGING_LEVEL: ${logging_level}

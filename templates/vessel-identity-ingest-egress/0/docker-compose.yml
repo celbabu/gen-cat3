@@ -12,9 +12,9 @@
 
 version: '2'
 services:
-  postgres:
+  vessel-postgres:
     image: localhost:5000/vessel-identity-postgres:dev
-    hostname: postgres
+    hostname: vessel-postgres
     restart: always
     shm_size: 1024MB
     ports:

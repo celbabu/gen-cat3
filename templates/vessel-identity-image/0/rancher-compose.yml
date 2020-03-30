@@ -42,6 +42,11 @@ catalog:
       required: true
       type: "int"
       default: 8060
+    - variable: vessel_postgres
+      label: "Image DB service"         
+      description: "DB host to store vessel image map"                                   
+      required: false
+      type: "service"    
     - variable: image_db_host
       label: "Image DB Host"         
       description: "DB host to store vessel image map"                                   

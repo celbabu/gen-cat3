@@ -1,6 +1,6 @@
 version: '2'
 services:
-  postgres:
+  vessel-postgres:
     scale: 1
   ingest-lloyds:
     scale: 1

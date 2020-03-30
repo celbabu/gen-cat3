@@ -1,6 +1,6 @@
 version: '2'
 services:
-  vessel-postgres:
+  postgres:
     scale: 1
   ingest-lloyds:
     scale: 1
@@ -55,7 +55,7 @@ catalog:
       description: "DB host to store vessel identity"                                   
       required: true
       type: "string"
-      default: "vessel-postgres"                        
+      default: "postgres"                        
     - variable: identity_db_name
       label: "Identity DB Name"         
       description: "DB name to store vessel identity"                                   

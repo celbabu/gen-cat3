@@ -12,9 +12,8 @@
 
 version: '2'
 services:
-  vessel-postgres:
+  postgres:
     image: localhost:5000/vessel-identity-postgres:dev
-    hostname: vessel-postgres
     restart: always
     shm_size: 1024MB
     ports:
@@ -32,7 +31,7 @@ services:
     ports:
       - ${lloyds_ingest_port}:${lloyds_ingest_port}
     depends_on:
-      - vessel-postgres
+      - postgres
     environment:
       APPLICATION_ID:  ${application_id}-ingestlloyds
       LOGGING_LEVEL: ${logging_level}
@@ -71,7 +70,7 @@ services:
     ports:
       - ${itu_ingest_port}:${itu_ingest_port}
     depends_on:
-      - vessel-postgres
+      - postgres
     environment:
       APPLICATION_ID:  ${application_id}-ingestitu
       LOGGING_LEVEL: INFO
@@ -109,7 +108,7 @@ services:
     ports:
       - ${tc_ingest_port}:${tc_ingest_port}
     depends_on:
-      - vessel-postgres
+      - postgres
     environment:
       APPLICATION_ID:  ${application_id}-ingesttc
       LOGGING_LEVEL: ${logging_level}
@@ -144,7 +143,7 @@ services:
     ports:
       - ${data_export_port}:${data_export_port}
     depends_on:
-      - vessel-postgres
+      - postgres
     environment:
       APPLICATION_ID:  ${application_id}-identitydataexport
       LOGGING_LEVEL: ${logging_level}
